@@ -11,5 +11,7 @@ Router.post('/register', SignupUser);
 
 Router.get('/verify-email',VerifyEmail)
 
+Router.post('/login')
+
 
 export default Router;
