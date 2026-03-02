@@ -22,7 +22,7 @@ export const VerifyEmail=async(req,res)=>{
     const jwtToken=jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:"7d"});
 
     // set cookie
-    res.cookie('toekn',jwtToken,{
+    res.cookie('Pick-token',jwtToken,{
       httpOnly:true,
       secure:true,
       maxAge:7*24*60*60*1000,

@@ -11,7 +11,12 @@ connectDB();
 
 // Middleware
 app.use(cookieParser());
-app.use(cors());
+
+app.use(cors({
+  origin: 'http://localhost:5173',  // ✅ Specific origin, not '*'
+  credentials: true,                // ✅ Allow credentials
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 

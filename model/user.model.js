@@ -25,6 +25,15 @@ const userSchema = new mongoose.Schema({
   EmailverificationTokenExpiry: {
     type: Date,
   },
+  resetOtp: {
+    type: String,
+  },
+  resetOtpExpiry: {
+    type: Date,
+  },
+  otpVerified:   { 
+    type: Boolean, default: false
+   },
   createdAt: {
     type: Date,
     default: Date.now,
