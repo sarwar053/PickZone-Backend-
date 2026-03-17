@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema({
   otpVerified:   { 
     type: Boolean, default: false
    },
+   userType: {
+    type: String,
+    enum: ["user", "proUser"],
+    default: "user",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -1,4 +1,4 @@
-import { User } from "../../model/user.model.js";
+import { User } from "../../models/user.model.js";
 import { Resend } from "resend";
 import crypto from "crypto";
 

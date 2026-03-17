@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { User } from "../../model/user.model.js";
+import { User } from "../../models/user.model.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { Resend } from "resend";
