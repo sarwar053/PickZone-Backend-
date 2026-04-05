@@ -1,11 +1,12 @@
 import { User } from "../../models/user.model.js";
 import { Pick } from "../../models/picks.model.js";
+import { Sport } from "../../models/spots.js";
 
 // ── API 1: Get all pro users with win rate and games ──
 export const GetProUsersProfileData = async (req, res) => {
   try {
     // Step 1: Find all pro users
-    const proUsers = await User.find({ userType: "proUser" }).select("name");
+    const proUsers = await User.find({ userType: "proUser" }).select("name profileImage");
 
     // Step 2: Loop through each pro user and get their picks
     const result = await Promise.all(
@@ -33,6 +34,8 @@ export const GetProUsersProfileData = async (req, res) => {
           sport,
         }));
 
+        const profileImageUrl=`${req.protocol}://${req.get("host")}/uploads/profiles/${user.profileImage}`
+
         return {
           _id: user._id,
           name: user.name,
@@ -42,6 +45,7 @@ export const GetProUsersProfileData = async (req, res) => {
           pending,
           winRate,
           games,
+          profileImageUrl
         };
       })
     );
@@ -86,18 +90,84 @@ export const getSingleProUserGames=async(req,res)=>{
 }
 
 // Get single pro user picks for a game
-export const getproUserPicksByGame=async(req,res)=>{
+export const getproUserPicksBySport =async(req,res)=>{
   try{
-    const {id,game}=req.params;
+    const {id,sport}=req.params;
+    const {pickPrice}=req.query;
 
-    const picks=await Pick.find({userId:id,game})
+    const query={userId:id,sport}
 
-    if(picks.length===0){
-      return res.status(404).json({success:false,message:"No picks found for this game"})  }
-      
-    res.status(200).json({success:true,picks})
-
+    if(pickPrice){
+      query.pickPrice=pickPrice;
+    }
+    const picks=await Pick.find(query)
+    if (picks.length === 0) {
+      return res.status(404).json({ success: false, message: "No picks found" });
+    }
+     console.log("pick data from this api",picks)
+     res.status(200).json({ success: true, picks })
   }catch(error){
     res.status(500).json({success:false,message:"Server error",error:error.message})  
+  }
+}
+
+// get single pick 
+export const getSinglePick=async(req,res)=>{
+
+  try{
+    const {pickId}=req.params;
+     const pick=await Pick.findById(pickId)
+     if(!pick){
+      return res.status(404).json({success:false,message:"Pick not found"})
+     }
+     const pickWithUrl={
+      ...pick._doc,
+      ticketurl:pick.ticket?`${req.protocol}://${req.get("host")}/uploads/ticket/${pick.ticket}`:null
+     }
+
+     res.status(200).json({success:true,pick:pickWithUrl})
+     
+  }catch(error){
+    res.status(500).json({success:false,message:"Server error",error:error.message})}
+}
+
+
+
+// getting logo
+export const getGameLogos=async(req,res)=>{
+  try{
+
+    const {sport,game}=req.query
+    const parts=game.split(/\s+vs\s+/i)
+    const teamAName=parts[0]?.trim();
+    const teamBName = parts[1]?.trim();
+    const sportDoc = await Sport.findOne({ sport: sport });
+
+    if (!sportDoc) return res.status(404).json({ message: "Sport not found" });
+
+     // Build full URL from relative path
+    const buildLogoUrl = (logoPath) => {
+      if (!logoPath) return null;
+      return `${req.protocol}://${req.get("host")}/uploads/logos/${logoPath}`;
+    };
+
+    const findTeam = (name) => {
+      return sportDoc.teams.find(t =>
+        t.name.toLowerCase().includes(name.toLowerCase()) ||
+        name.toLowerCase().includes(t.name.toLowerCase())
+      );
+    }
+    
+    const teamA = findTeam(teamAName);
+    const teamB = findTeam(teamBName);
+
+     return res.json({
+      teamA: { name: teamAName, logo: buildLogoUrl(teamA?.logo) },
+      teamB: { name: teamBName, logo: buildLogoUrl(teamB?.logo) },
+    });
+
+  }catch(err){
+ console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 }

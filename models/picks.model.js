@@ -10,6 +10,8 @@ const pickSchema = new mongoose.Schema(
 
         team: { type: String, required: true },
 
+        pickPrice: { type: String, required: true },
+
         pickType: { type: String, required: true },
 
         odds: { type: Number, required: true },
@@ -18,13 +20,22 @@ const pickSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        
+        bank:
+        {
+            type: String,
+            required: true
+        },
+        ticket: {
+            type: String,
+            required: true
+        },
+
         time: {
             type: String,
             required: true
         },
 
-        result: { type: String, enum: ["pending", "win", "loss", "push"], default: "pending" },
+        result: { type: String, enum: ["new", "win", "loss", "push"], default: "new" },
     },
     { timestamps: true }
 );

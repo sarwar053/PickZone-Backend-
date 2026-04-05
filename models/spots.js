@@ -9,7 +9,11 @@ const spotSchema=new mongoose.Schema(
             trim:true 
         },
         games:[{type:String,trim:true}],
-        teams:[{type:String,trim:true}]
+        teams:[{
+            name:{type:String,trim:true},
+            logo:{type:String,default:""}
+        }],
+        pickTypes:[{type:String,trim:true}]
  
     },
     {

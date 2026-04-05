@@ -4,14 +4,15 @@ import {User} from '../../models/user.model.js'
 
 const submitPicks = async (req, res) => {
     try{
-        const {sport,game,team,pickType,odds,analysis,time} = req.body;
+        const {sport,game,team,pickType,odds,analysis,time,pickPrice,bank} = req.body;
+        const ticket = req.file.filename;
         const userId = req.user._id;
 
-        if(!sport || !game || !team || !pickType || !odds || !analysis,!time){
+        if(!sport || !game || !team || !pickType || !odds || !analysis || !time || !pickPrice || !bank || !ticket){
             return res.status(400).json({success:false,message:"All fields are required"});
         }
         const user=await User.findById(userId);
-        if(!user || !user.userType==="proUser"){
+        if(!user || user.userType!=="proUser"){
             return res.status(404).json({success:false,message:"pro user not found"});
         }
 
@@ -23,7 +24,10 @@ const submitPicks = async (req, res) => {
             pickType,
             odds,
             analysis,
-            time
+            time,
+            pickPrice,
+            bank,
+            ticket
         });
 
         await newPick.save();

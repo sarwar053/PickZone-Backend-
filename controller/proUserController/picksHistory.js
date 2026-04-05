@@ -5,9 +5,6 @@ export const getPicks=async(req,res)=>{
         const userId=req.user._id;
         const picks=await Pick.find({userId:userId}).sort({createdAt:-1});
 
-        if(!picks || picks.length===0){
-            return res.status(404).json({message:"No picks found"});
-        }
 
         
         res.status(200).json({message:"Picks fetched successfully",picks:picks});

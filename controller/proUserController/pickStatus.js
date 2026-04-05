@@ -8,7 +8,7 @@ export const getStatus=async (req ,res)=>{
         const totalPicks=picks.length;
         const wins=picks.filter(pick=>pick.result==="win").length;
         const losses=picks.filter(pick=>pick.result==="loss").length;
-        const pending=picks.filter(pick=>pick.result==="pending").length
+        const pending=picks.filter(pick=>pick.result==="new").length
 
         const winRate=wins+losses>0?((wins/(wins+losses))*100).toFixed(1):0;
 
